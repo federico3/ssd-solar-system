@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "author": "Anonymous maker",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 441.6, "left": 168.04, "attrs": {} },
+    { "type": "wokwi-neopixel", "id": "pixel1", "top": 194, "left": 191.5, "attrs": {} },
+    {
+      "type": "wokwi-led-ring",
+      "id": "ring8",
+      "top": 161.23,
+      "left": 161.23,
+      "attrs": { "pixels": "8", "background": "black", "pixelSpacing": "-1.0" }
+    },
+    {
+      "type": "wokwi-led-ring",
+      "id": "ring12",
+      "top": 141.498,
+      "left": 141.498,
+      "attrs": { "pixels": "12", "background": "black", "pixelSpacing": "0.4" }
+    },
+    {
+      "type": "wokwi-led-ring",
+      "id": "ring16",
+      "top": 121.765,
+      "left": 121.765,
+      "attrs": { "pixels": "16", "background": "black", "pixelSpacing": "1.1" }
+    },
+    {
+      "type": "wokwi-led-ring",
+      "id": "ring24",
+      "top": 99.626,
+      "left": 99.626,
+      "attrs": { "pixels": "24", "background": "black", "pixelSpacing": "0.6" }
+    },
+    {
+      "type": "wokwi-led-ring",
+      "id": "ring32",
+      "top": 78.449,
+      "left": 78.449,
+      "attrs": { "pixels": "32", "background": "black", "pixelSpacing": "0.3" }
+    },
+    {
+      "type": "wokwi-led-ring",
+      "id": "ring40",
+      "top": 57.754,
+      "left": 57.754,
+      "attrs": { "pixels": "40", "background": "black", "pixelSpacing": "0.1" }
+    },
+    {
+      "type": "wokwi-led-ring",
+      "id": "ring48",
+      "top": 36.096,
+      "left": 36.096,
+      "attrs": { "pixels": "48", "background": "black", "pixelSpacing": "0" }
+    },
+    {
+      "type": "wokwi-led-ring",
+      "id": "ring60",
+      "top": 14.41,
+      "left": 17.68,
+      "attrs": { "pixels": "60", "background": "black", "pixelSpacing": "-0.4" }
+    },
+    { "type": "wokwi-ds1307", "id": "rtc1", "top": 445.8, "left": 316.9, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "rtc1:GND", "esp:GND.2", "black", [ "h-19.2", "v-38.4" ] ],
+    [ "esp:5V", "rtc1:5V", "red", [ "v19.2", "h134.55", "v-191.6" ] ],
+    [ "ring60:VCC", "esp:5V", "red", [ "v9.58", "h-44.76", "v307.2" ] ],
+    [ "esp:GND.2", "ring60:GND", "black", [ "h9.6", "v-48", "h-86.4" ] ],
+    [ "rtc1:SCL", "esp:22", "magenta", [ "h-28.8", "v105.4" ] ],
+    [ "esp:21", "rtc1:SDA", "limegreen", [ "h28.8", "v-38.1" ] ],
+    [ "ring60:DIN", "esp:2", "yellow", [ "v9.58", "h76.8", "v192.02" ] ],
+    [ "ring60:GND", "ring48:GND", "", [ "*" ] ],
+    [ "ring48:GND", "ring40:GND", "", [ "*" ] ],
+    [ "ring40:GND", "ring32:GND", "", [ "*" ] ],
+    [ "ring32:GND", "ring24:GND", "", [ "*" ] ],
+    [ "ring24:GND", "ring16:GND", "", [ "*" ] ],
+    [ "ring16:GND", "ring12:GND", "", [ "*" ] ],
+    [ "ring12:GND", "ring8:GND", "", [ "*" ] ],
+    [ "ring8:GND", "pixel1:VSS", "", [ "*" ] ],
+    [ "ring60:VCC", "ring48:VCC", "", [ "*" ] ],
+    [ "ring48:VCC", "ring40:VCC", "", [ "*" ] ],
+    [ "ring40:VCC", "ring32:VCC", "", [ "*" ] ],
+    [ "ring32:VCC", "ring24:VCC", "", [ "*" ] ],
+    [ "ring24:VCC", "ring16:VCC", "", [ "*" ] ],
+    [ "ring16:VCC", "ring12:VCC", "", [ "*" ] ],
+    [ "ring12:VCC", "ring8:VCC", "", [ "*" ] ],
+    [ "ring8:VCC", "pixel1:VDD", "", [ "*" ] ],
+    [ "ring60:DOUT", "ring48:DIN", "", [ "*" ] ],
+    [ "ring48:DOUT", "ring40:DIN", "", [ "*" ] ],
+    [ "ring40:DOUT", "ring32:DIN", "", [ "*" ] ],
+    [ "ring32:DOUT", "ring24:DIN", "", [ "*" ] ],
+    [ "ring24:DOUT", "ring16:DIN", "", [ "*" ] ],
+    [ "ring16:DOUT", "ring12:DIN", "", [ "*" ] ],
+    [ "ring12:DOUT", "ring8:DIN", "", [ "*" ] ],
+    [ "ring8:DOUT", "pixel1:DIN", "", [ "*" ] ]
+  ],
+  "dependencies": {}
+}
