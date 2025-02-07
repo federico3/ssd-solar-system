@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "planets.h"
-#include "eccentric_anomaly.h"
+#include "orbits.h"
 extern long int timezone; // Seconds between localtime and UTC.
 
 int main(){
