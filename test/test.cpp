@@ -1,6 +1,7 @@
 #include "doctest/doctest.h"
 #include "time.h"
 #include "../planets.h"
+#include "../planets_1800-2050.h"
 #include "../orbits.h"
 
 typedef struct alignment {
@@ -21,7 +22,10 @@ TEST_CASE("Checking conjunctions and oppositions"){
     time_t j2000_localtime = mktime(&j2000_tm);
     time_t j2000_utctime = j2000_localtime-timezone;
 
-    keplerian_elements planets[8]={Mercury, Venus, Earth_Moon_barycenter, Mars, Jupiter, Saturn, Uranus, Neptune};
+    keplerian_elements planets_lr[8]={Mercury, Venus, Earth_Moon_barycenter, Mars, Jupiter, Saturn, Uranus, Neptune};
+    keplerian_elements planets_sr[8]={Mercury_sr, Venus_sr, Earth_Moon_barycenter_sr, Mars_sr, Jupiter_sr, Saturn_sr, Uranus_sr, Neptune_sr};
+    // This is a container of containers? It's all pointers anyway.
+    keplerian_elements * all_planets[2]={planets_lr, planets_sr};
 
     SUBCASE("Oppositions"){
         // Oppositions from https://www.rmg.co.uk/stories/topics/what-planet-opposition
@@ -81,15 +85,18 @@ TEST_CASE("Checking conjunctions and oppositions"){
                 }
             }, // Uranus
         };
-
-        for (int i=0; i<6; i++){
-            time_t opposition_timer = mktime(&oppositions[i].date);
-            double seconds_since_j2k = difftime(opposition_timer, j2000_utctime);
-            double days_since_j2k = seconds_since_j2k/(60*60*24);
-            double p1_lon = longitude_at_date(planets[oppositions[i].planet1], days_since_j2k);
-            double p2_lon = longitude_at_date(planets[oppositions[i].planet2], days_since_j2k);
-            CHECK(abs(p1_lon-p2_lon)<1./180.*M_PI);
-            // printf("Planet longitudes: %f and %f\n Difference %f rad or %f deg\n",p1_lon, p2_lon, abs(p1_lon-p2_lon), abs(p1_lon-p2_lon)*180./M_PI);
+        for (int j=0; j<2; j++){
+            // Iterate over sets of planets
+            keplerian_elements * planets = all_planets[j]; 
+            for (int i=0; i<6; i++){ // Iterate over oppositions
+                time_t opposition_timer = mktime(&oppositions[i].date);
+                double seconds_since_j2k = difftime(opposition_timer, j2000_utctime);
+                double days_since_j2k = seconds_since_j2k/(60*60*24);
+                double p1_lon = longitude_at_date(planets[oppositions[i].planet1], days_since_j2k);
+                double p2_lon = longitude_at_date(planets[oppositions[i].planet2], days_since_j2k);
+                CHECK(abs(p1_lon-p2_lon)<1./180.*M_PI);
+                // printf("Planet longitudes: %f and %f\n Difference %f rad or %f deg\n",p1_lon, p2_lon, abs(p1_lon-p2_lon), abs(p1_lon-p2_lon)*180./M_PI);
+            }
         }
     }
 
@@ -197,25 +204,29 @@ TEST_CASE("Checking conjunctions and oppositions"){
             }, // Mercury
         };
 
-        for (int i=0; i<11; i++){
-            time_t conjunction_timer = mktime(&conjunctions[i].date);
-            double seconds_since_j2k = difftime(conjunction_timer, j2000_utctime);
-            double days_since_j2k = seconds_since_j2k/(60*60*24);
-            double p1_lon = longitude_at_date(planets[conjunctions[i].planet1], days_since_j2k);
-            double p2_lon = longitude_at_date(planets[conjunctions[i].planet2], days_since_j2k);
-            double longitude_difference = abs(p1_lon-p2_lon);
-            if (conjunctions[i].planet2>2){ // For Mars and onward, oppositions definitely happen on opposite sides of the Sun
-                CHECK(longitude_difference>179./180.*M_PI);
-                CHECK(longitude_difference<181./180.*M_PI);
-            } else { // For Mercury or Venus, conjunction may also well be opposition
-                if (longitude_difference<M_PI/2.){
-                    CHECK(longitude_difference<1./180.*M_PI);
-                } else {
+        for (int j=0; j<2; j++){
+            // Iterate over sets of planets
+            keplerian_elements * planets = all_planets[j]; 
+            for (int i=0; i<11; i++){
+                time_t conjunction_timer = mktime(&conjunctions[i].date);
+                double seconds_since_j2k = difftime(conjunction_timer, j2000_utctime);
+                double days_since_j2k = seconds_since_j2k/(60*60*24);
+                double p1_lon = longitude_at_date(planets[conjunctions[i].planet1], days_since_j2k);
+                double p2_lon = longitude_at_date(planets[conjunctions[i].planet2], days_since_j2k);
+                double longitude_difference = abs(p1_lon-p2_lon);
+                if (conjunctions[i].planet2>2){ // For Mars and onward, oppositions definitely happen on opposite sides of the Sun
                     CHECK(longitude_difference>179./180.*M_PI);
                     CHECK(longitude_difference<181./180.*M_PI);
+                } else { // For Mercury or Venus, conjunction may also well be opposition
+                    if (longitude_difference<M_PI/2.){
+                        CHECK(longitude_difference<1./180.*M_PI);
+                    } else {
+                        CHECK(longitude_difference>179./180.*M_PI);
+                        CHECK(longitude_difference<181./180.*M_PI);
+                    }
                 }
+                // printf("Planet longitudes: %f and %f\n Difference %f rad or %f deg\n",p1_lon, p2_lon, abs(p1_lon-p2_lon), abs(p1_lon-p2_lon)*180./M_PI);
             }
-            // printf("Planet longitudes: %f and %f\n Difference %f rad or %f deg\n",p1_lon, p2_lon, abs(p1_lon-p2_lon), abs(p1_lon-p2_lon)*180./M_PI);
         }
     }
 }
